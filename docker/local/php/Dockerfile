@@ -18,6 +18,7 @@ RUN apk update \
            git \
            icu-dev \
            libjpeg-turbo-dev \
+           libpq-dev \
            libpng-dev \
            libwebp-dev \
            libzip-dev \
@@ -45,9 +46,8 @@ RUN apk update \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install bcmath \
     && docker-php-ext-install intl \
-    && docker-php-ext-install mysqli \
-                              pdo \
-                              pdo_mysql \
+    && docker-php-ext-install pdo \
+                              pdo_pgsql pgsql \
     && apk add --update linux-headers \
     && pecl install xdebug \
     && docker-php-ext-enable xdebug \

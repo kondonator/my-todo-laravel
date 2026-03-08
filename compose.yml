@@ -1,0 +1,43 @@
+services:
+    mail:
+        container_name: my-todo-mail
+        image: axllent/mailpit:latest
+        ports:
+            - ${MAIL_PORT}:1025
+            - "8025:8025"
+        networks:
+            - my-network
+
+    pgsql:
+        container_name: my-todo-pgsql
+        build:
+            context: .
+            dockerfile: ./docker/local/pgsql/Dockerfile
+        ports:
+            - ${DB_PORT}:5432
+        environment:
+            POSTGRES_USER: ${DB_USERNAME}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+            POSTGRES_DB: ${DB_DATABASE}
+        volumes:
+            - ./docker/local/pgsql/data:/var/lib/postgresql
+        networks:
+            - my-network
+
+    php:
+        container_name: my-todo-php
+        build:
+            context: .
+            dockerfile: ./docker/local/php/Dockerfile
+        ports:
+            - "5173:5173"
+            - "8000:80"
+        volumes:
+            - .:/var/www/html
+            - ./docker/local/php/etc/php/conf.d/zzz-docker-php.ini:/usr/local/etc/php/conf.d/zzz-docker-php.ini
+        networks:
+            - my-network
+
+networks:
+    my-network:
+        driver: bridge

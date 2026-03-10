@@ -31,12 +31,28 @@ services:
             dockerfile: ./docker/local/php/Dockerfile
         ports:
             - "5173:5173"
-            - "8000:80"
         volumes:
             - .:/var/www/html
             - ./docker/local/php/etc/php/conf.d/zzz-docker-php.ini:/usr/local/etc/php/conf.d/zzz-docker-php.ini
         networks:
             - my-network
+
+    nginx:
+        container_name: my-todo-nginx
+        build:
+            context: .
+            dockerfile: ./docker/local/nginx/Dockerfile
+        ports:
+            - "8000:80"
+        volumes:
+            - .:/var/www/html
+            - ./docker/local/nginx/etc/nginx.conf:/etc/nginx/nginx.conf
+            - ./docker/local/nginx/etc/conf.d:/etc/nginx/conf.d
+            - ./docker/local/logs/nginx:/var/log/nginx
+        networks:
+            - my-network
+        depends_on:
+            - php
 
 networks:
     my-network:
